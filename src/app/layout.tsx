@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/context/AppProviders";
+import RoleSwitcherBanner from "@/components/RoleSwitcherBanner";
+import Navbar from "@/components/Navbar";
+import CartDrawer from "@/components/CartDrawer";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,9 +24,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} min-h-screen bg-slate-50 text-slate-900 antialiased`}
+        className={`${inter.className} min-h-screen flex flex-col bg-slate-50 text-slate-900 antialiased`}
       >
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          {/* Top Demo Switcher for Recruiters / Showcase */}
+          <RoleSwitcherBanner />
+
+          {/* Sticky Navbar */}
+          <Navbar />
+
+          {/* Slide-over Cart Drawer */}
+          <CartDrawer />
+
+          {/* Main Viewport */}
+          <main className="flex-1">{children}</main>
+
+          {/* Footer */}
+          <Footer />
+        </AppProviders>
       </body>
     </html>
   );
