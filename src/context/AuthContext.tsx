@@ -1,3 +1,4 @@
+// src/context/AuthContext.tsx
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -17,7 +18,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User>(MOCK_USERS[0]); // Default: Alex (Customer)
-  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const savedUserId = localStorage.getItem("marketnest_active_user");
@@ -25,7 +25,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const found = MOCK_USERS.find((u) => u.id === savedUserId);
       if (found) setCurrentUser(found);
     }
-    setIsInitialized(true);
   }, []);
 
   const switchUser = (userId: string) => {
@@ -51,9 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isVendor: currentUser.role === "vendor",
     isAdmin: currentUser.role === "admin",
   };
-
-  // SSR hydration mismatch prevent karne ke liye
-  if (!isInitialized) return null;
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
