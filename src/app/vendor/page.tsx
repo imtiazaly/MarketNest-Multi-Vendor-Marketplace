@@ -1,7 +1,9 @@
+// src/app/vendor/page.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useMarketplace } from "@/context/MarketplaceContext";
 import { formatPrice, formatDate } from "@/lib/utils";
@@ -16,16 +18,12 @@ import {
   Trash2,
   ExternalLink,
   Store,
-  Clock,
-  CheckCircle,
-  Truck,
   X,
-  AlertCircle,
-  Upload,
 } from "lucide-react";
 
 export default function VendorDashboardPage() {
-  const { currentUser, switchUser, availableUsers } = useAuth();
+  const router = useRouter();
+  const { currentUser } = useAuth();
   const {
     getVendorById,
     getProductsByVendor,
@@ -35,11 +33,12 @@ export default function VendorDashboardPage() {
     updateOrderStatus,
   } = useMarketplace();
 
-  // If active user is not vendor, pick first vendor for demo or prompt switch
-  const activeVendorId = currentUser.vendorId || "vnd-1";
-  const vendor = getVendorById(activeVendorId);
-  const vendorProducts = getProductsByVendor(activeVendorId);
-  const vendorOrders = getOrdersByVendor(activeVendorId);
+  // Clean Route Guard: Agar user vendor nahi hai to foran redirect karein bina kisi warning flash ke
+  useEffect(() => {
+    if (currentUser.role !== "vendor") {
+      router.replace("/");
+    }
+  }, [currentUser.role, router]);
 
   // Modal State for Adding Product
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -57,6 +56,16 @@ export default function VendorDashboardPage() {
   );
   const [newDescription, setNewDescription] = useState("");
   const [newTags, setNewTags] = useState("Handmade, Studio, Premium");
+
+  // Agar user vendor nahi hai to render ko yahan rok dein (No warning, No flash)
+  if (currentUser.role !== "vendor") {
+    return null;
+  }
+
+  const activeVendorId = currentUser.vendorId || "vnd-1";
+  const vendor = getVendorById(activeVendorId);
+  const vendorProducts = getProductsByVendor(activeVendorId);
+  const vendorOrders = getOrdersByVendor(activeVendorId);
 
   // Calculate Vendor Metrics
   const totalRevenue = vendorOrders.reduce((sum, order) => {
@@ -106,33 +115,6 @@ export default function VendorDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* Role Switcher Helper if user is currently Customer */}
-      {currentUser.role !== "vendor" && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-amber-900 text-xs">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
-            <span>
-              You are currently viewing as{" "}
-              <strong>{currentUser.name} (Customer)</strong>. Switch to a vendor
-              persona to simulate real store ownership:
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {availableUsers
-              .filter((u) => u.role === "vendor")
-              .map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => switchUser(v.id)}
-                  className="px-3 py-1.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition"
-                >
-                  Switch to {v.name}
-                </button>
-              ))}
-          </div>
-        </div>
-      )}
-
       {/* Vendor Profile Header */}
       <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
