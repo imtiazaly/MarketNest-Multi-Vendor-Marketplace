@@ -1,3 +1,4 @@
+// src/components/Navbar.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -12,7 +13,10 @@ import {
   Store,
   Menu,
   X,
-  Sparkles,
+  User,
+  LogOut,
+  ChevronDown,
+  ShieldCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -20,9 +24,10 @@ export default function Navbar() {
   const router = useRouter();
   const { totalItems, openCart } = useCart();
   const { totalWishlistItems } = useWishlist();
-  const { currentUser } = useAuth();
+  const { currentUser, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,18 +78,6 @@ export default function Navbar() {
               >
                 My Orders
               </Link>
-              <Link
-                href="/products?category=Home%20%26%20Living"
-                className="hover:text-emerald-600 transition"
-              >
-                Home & Living
-              </Link>
-              <Link
-                href="/products?category=Electronics"
-                className="hover:text-emerald-600 transition"
-              >
-                Tech Gear
-              </Link>
             </nav>
           </div>
 
@@ -102,7 +95,7 @@ export default function Navbar() {
             </form>
           </div>
 
-          {/* Action Icons */}
+          {/* Action Icons & User Session */}
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Wishlist Icon */}
             <Link
@@ -132,22 +125,102 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* User Avatar Badge */}
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200">
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-emerald-500/20"
-              />
-              <div className="hidden xl:flex flex-col text-left">
-                <span className="text-xs font-semibold text-slate-900 leading-tight">
-                  {currentUser.name}
-                </span>
-                <span className="text-[10px] text-slate-400 capitalize">
-                  {currentUser.role}
-                </span>
+            {/* User Profile Dropdown or Sign In Button */}
+            {isAuthenticated && currentUser ? (
+              <div className="relative pl-2 border-l border-slate-200">
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-100 transition"
+                >
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name}
+                    className="w-8 h-8 rounded-full object-cover ring-2 ring-emerald-500/20"
+                  />
+                  <div className="hidden xl:flex flex-col text-left">
+                    <span className="text-xs font-semibold text-slate-900 leading-tight">
+                      {currentUser.name}
+                    </span>
+                    <span className="text-[10px] text-slate-400 uppercase font-mono">
+                      {currentUser.role}
+                    </span>
+                  </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {userDropdownOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 text-xs text-slate-700"
+                    onClick={() => setUserDropdownOpen(false)}
+                  >
+                    <div className="px-4 py-2 border-b border-slate-100">
+                      <p className="font-bold text-slate-900 truncate">
+                        {currentUser.name}
+                      </p>
+                      <p className="text-[10px] text-slate-400 truncate">
+                        {currentUser.email}
+                      </p>
+                    </div>
+
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 transition"
+                    >
+                      <User className="w-4 h-4 text-slate-500" />
+                      <span>My Profile Settings</span>
+                    </Link>
+
+                    <Link
+                      href="/orders"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 transition"
+                    >
+                      <ShoppingBag className="w-4 h-4 text-slate-500" />
+                      <span>Order History & Tracking</span>
+                    </Link>
+
+                    {currentUser.role === "vendor" && (
+                      <Link
+                        href="/vendor"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 transition text-emerald-700 font-semibold"
+                      >
+                        <Store className="w-4 h-4" />
+                        <span>Vendor Dashboard</span>
+                      </Link>
+                    )}
+
+                    {currentUser.role === "admin" && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 transition text-purple-700 font-semibold"
+                      >
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>Admin Governance</span>
+                      </Link>
+                    )}
+
+                    <div className="border-t border-slate-100 my-1" />
+
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 transition text-left"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+                <Link
+                  href="/login"
+                  className="px-3.5 py-1.5 bg-slate-900 hover:bg-emerald-600 text-white text-xs font-semibold rounded-xl shadow-xs transition"
+                >
+                  Sign In
+                </Link>
+              </div>
+            )}
 
             {/* Mobile Menu Trigger */}
             <button
@@ -192,11 +265,18 @@ export default function Navbar() {
                 Browse Makers & Vendors
               </Link>
               <Link
-                href="/wishlist"
+                href="/orders"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-2 py-1.5 hover:bg-slate-100 rounded"
               >
-                My Wishlist ({totalWishlistItems})
+                My Orders
+              </Link>
+              <Link
+                href="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-2 py-1.5 hover:bg-slate-100 rounded"
+              >
+                Profile & Settings
               </Link>
             </div>
           </div>
