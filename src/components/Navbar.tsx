@@ -68,6 +68,12 @@ export default function Navbar() {
                 Our Makers
               </Link>
               <Link
+                href="/orders"
+                className="hover:text-emerald-600 transition"
+              >
+                My Orders
+              </Link>
+              <Link
                 href="/products?category=Home%20%26%20Living"
                 className="hover:text-emerald-600 transition"
               >
