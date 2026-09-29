@@ -1,3 +1,4 @@
+// src/app/page.tsx
 "use client";
 
 import React from "react";
@@ -18,8 +19,10 @@ import {
 export default function HomePage() {
   const { products, vendors } = useMarketplace();
 
+  // Curated subsets for a fast, uncluttered homepage
   const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 4);
-  const recentProducts = products.slice(0, 8);
+  const spotlightVendors = vendors.slice(0, 6); // Sirf Top 6 Spotlight Studios
+  const recentDrops = products.slice(0, 8); // Top 8 Fresh Drops
 
   return (
     <div className="space-y-16 pb-16">
@@ -29,7 +32,7 @@ export default function HomePage() {
           <div className="max-w-3xl space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-xs font-semibold border border-emerald-200/60">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Independent Maker Network &bull; Spring Collection</span>
+              <span>Independent Maker Network &bull; 20 Verified Studios</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
@@ -50,30 +53,30 @@ export default function HomePage() {
                 href="/products"
                 className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2 group"
               >
-                <span>Explore All Goods</span>
+                <span>Explore All 200+ Goods</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/vendors"
                 className="px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-800 font-semibold text-sm rounded-xl border border-slate-200/80 shadow-xs transition"
               >
-                Browse Makers
+                Meet All 20 Makers
               </Link>
             </div>
 
             {/* Quick Metrics */}
             <div className="pt-8 border-t border-slate-200/80 grid grid-cols-3 gap-6 max-w-lg">
               <div>
-                <p className="text-2xl font-bold text-slate-900">50+</p>
-                <p className="text-xs text-slate-500">Verified Makers</p>
+                <p className="text-2xl font-bold text-slate-900">20</p>
+                <p className="text-xs text-slate-500">Verified Studios</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">200+</p>
+                <p className="text-xs text-slate-500">Handcrafted Items</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-slate-900">4.9 / 5.0</p>
                 <p className="text-xs text-slate-500">Avg Customer Rating</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-900">100%</p>
-                <p className="text-xs text-slate-500">Authentic Guarantee</p>
               </div>
             </div>
           </div>
@@ -95,7 +98,7 @@ export default function HomePage() {
             href="/products"
             className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
           >
-            <span>View Catalog</span>
+            <span>View Full Catalog</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -117,7 +120,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products Showcase */}
+      {/* Featured Products Showcase (Top 4) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -125,7 +128,7 @@ export default function HomePage() {
               Staff Picks
             </span>
             <h2 className="text-2xl font-bold text-slate-900">
-              Featured Creations
+              Curated Featured Creations
             </h2>
           </div>
           <Link
@@ -144,77 +147,79 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Vendor Spotlight (Makers Grid) */}
+      {/* CURATED VENDOR SPOTLIGHT: Top 6 Studios Only (Not all 20) */}
       <section className="bg-slate-100/60 py-16 border-y border-slate-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
-                Verified Studios
+                Maker Spotlight
               </span>
-              <h2 className="text-2xl font-bold text-slate-900">
-                Meet Independent Makers
+              <h2 className="text-2xl font-bold text-slate-900 mt-0.5">
+                Featured Independent Studios
               </h2>
               <p className="text-xs text-slate-500 mt-1">
-                Each product is crafted, packaged, and shipped directly by the
-                maker.
+                Showing 6 of our 20 verified global maker workshops.
               </p>
             </div>
             <Link
               href="/vendors"
-              className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+              className="px-4 py-2.5 bg-white hover:bg-slate-900 hover:text-white text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 shadow-2xs transition flex items-center gap-1.5 w-fit"
             >
-              <span>View All Studios</span>
+              <span>Explore All 20 Studios</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {vendors.map((vendor) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {spotlightVendors.map((vendor) => (
               <VendorCard key={vendor.id} vendor={vendor} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Fresh Drops (Recent Inventory) */}
+      {/* Fresh Drops (Top 8 Recent Items) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
               Inventory Feed
             </span>
-            <h2 className="text-2xl font-bold text-slate-900">Fresh Drops</h2>
+            <h2 className="text-2xl font-bold text-slate-900">
+              Fresh Workshop Drops
+            </h2>
           </div>
           <Link
             href="/products"
             className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
           >
-            <span>Explore All</span>
+            <span>Explore 200+ Catalog</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {recentProducts.map((product) => (
+          {recentDrops.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
 
-      {/* Marketplace Guarantee Banner */}
+      {/* Seller Invitation Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-3xl p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-xl text-center md:text-left">
             <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-semibold border border-emerald-500/30">
-              Maker Friendly Platform
+              Global Maker Community
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
               Are you an independent maker or boutique brand?
             </h2>
             <p className="text-sm text-slate-300 leading-relaxed">
-              Open your storefront on MarketNest, reach thousands of conscious
-              buyers, and manage orders with our dedicated vendor dashboard.
+              Open your storefront on MarketNest alongside our 20 verified
+              studios. Reach thousands of conscious buyers with unified
+              multi-vendor fulfillment.
             </p>
           </div>
 

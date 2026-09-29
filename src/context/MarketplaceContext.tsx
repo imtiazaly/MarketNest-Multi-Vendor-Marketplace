@@ -41,15 +41,23 @@ export function MarketplaceProvider({
   const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    const savedProducts = localStorage.getItem("marketnest_products");
-    const savedOrders = localStorage.getItem("marketnest_orders");
+  const PRODUCTS_KEY = "marketnest_products_v2";
+  const ORDERS_KEY = "marketnest_orders_v2";
 
+  useEffect(() => {
+    const savedProducts = localStorage.getItem(PRODUCTS_KEY);
+    const savedOrders = localStorage.getItem(ORDERS_KEY);
     if (savedProducts) {
       try {
-        setProducts(JSON.parse(savedProducts));
+        const parsed = JSON.parse(savedProducts);
+        // Agar purana chhota dataset ho to naya 200+ items load karein
+        if (parsed.length >= 200) {
+          setProducts(parsed);
+        } else {
+          setProducts(MOCK_PRODUCTS);
+        }
       } catch (e) {
-        console.error(e);
+        setProducts(MOCK_PRODUCTS);
       }
     }
     if (savedOrders) {
@@ -61,11 +69,10 @@ export function MarketplaceProvider({
     }
     setIsInitialized(true);
   }, []);
-
   useEffect(() => {
     if (isInitialized) {
-      localStorage.setItem("marketnest_products", JSON.stringify(products));
-      localStorage.setItem("marketnest_orders", JSON.stringify(orders));
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+      localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
     }
   }, [products, orders, isInitialized]);
 

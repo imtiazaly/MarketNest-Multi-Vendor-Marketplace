@@ -1,3 +1,4 @@
+// src/app/admin/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -17,9 +18,6 @@ import {
   ExternalLink,
   Trash2,
   CheckCircle,
-  Clock,
-  Truck,
-  Filter,
 } from "lucide-react";
 
 export default function AdminPortalPage() {
@@ -28,12 +26,12 @@ export default function AdminPortalPage() {
   const { products, vendors, orders, updateOrderStatus, deleteProduct } =
     useMarketplace();
 
-  // Clean Route Guard: Agar user admin nahi hai to quietly redirect karein
+  // Bulletproof Route Guard: Null-safe check
   useEffect(() => {
-    if (currentUser.role !== "admin") {
+    if (!currentUser || currentUser.role !== "admin") {
       router.replace("/");
     }
-  }, [currentUser.role, router]);
+  }, [currentUser, router]);
 
   const [activeTab, setActiveTab] = useState<"studios" | "orders" | "catalog">(
     "studios",
@@ -41,15 +39,15 @@ export default function AdminPortalPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>("All");
   const [catalogSearch, setCatalogSearch] = useState<string>("");
 
-  if (currentUser.role !== "admin") {
-    return null; // Prevents any UI flash before redirect
+  // Agar user null ho ya admin na ho to render yahan rok dein
+  if (!currentUser || currentUser.role !== "admin") {
+    return null;
   }
 
   // Platform Level Calculations
   const platformGMV =
-    orders.reduce((sum, o) => sum + o.totalAmount, 0) + 165800; // Historical + Live
-  const platformCommission = platformGMV * 0.1; // 10% take-rate
-  const totalOrdersCount = orders.length + 380; // Historical + Live
+    orders.reduce((sum, o) => sum + o.totalAmount, 0) + 165800;
+  const platformCommission = platformGMV * 0.1;
 
   // Filter Orders
   const filteredOrders = orders.filter((o) => {
@@ -303,7 +301,6 @@ export default function AdminPortalPage() {
                 </p>
               </div>
 
-              {/* Status Filter */}
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-500 font-medium">
                   Filter:
@@ -350,7 +347,6 @@ export default function AdminPortalPage() {
                         {formatPrice(ord.totalAmount)}
                       </span>
 
-                      {/* Admin Override Control */}
                       <select
                         value={ord.status}
                         onChange={(e) =>
@@ -372,7 +368,6 @@ export default function AdminPortalPage() {
                     </div>
                   </div>
 
-                  {/* Multi-Vendor Items breakdown */}
                   <div className="bg-slate-50 p-3 rounded-xl space-y-2 text-xs">
                     {ord.items.map((item) => (
                       <div
@@ -417,7 +412,6 @@ export default function AdminPortalPage() {
                 </p>
               </div>
 
-              {/* Search */}
               <div className="relative">
                 <input
                   type="text"

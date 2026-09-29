@@ -33,12 +33,12 @@ export default function VendorDashboardPage() {
     updateOrderStatus,
   } = useMarketplace();
 
-  // Clean Route Guard: Agar user vendor nahi hai to foran redirect karein bina kisi warning flash ke
+  // Bulletproof Route Guard: Null-safe check
   useEffect(() => {
-    if (currentUser.role !== "vendor") {
+    if (!currentUser || currentUser.role !== "vendor") {
       router.replace("/");
     }
-  }, [currentUser.role, router]);
+  }, [currentUser, router]);
 
   // Modal State for Adding Product
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -57,8 +57,8 @@ export default function VendorDashboardPage() {
   const [newDescription, setNewDescription] = useState("");
   const [newTags, setNewTags] = useState("Handmade, Studio, Premium");
 
-  // Agar user vendor nahi hai to render ko yahan rok dein (No warning, No flash)
-  if (currentUser.role !== "vendor") {
+  // Agar user null ho ya vendor na ho to render yahan rok dein
+  if (!currentUser || currentUser.role !== "vendor") {
     return null;
   }
 
@@ -394,7 +394,6 @@ export default function VendorDashboardPage() {
                           </p>
                         </div>
 
-                        {/* Status update controls */}
                         <div className="flex items-center gap-2">
                           <span
                             className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
@@ -423,7 +422,6 @@ export default function VendorDashboardPage() {
                         </div>
                       </div>
 
-                      {/* Items */}
                       <div className="bg-slate-50/70 p-3 rounded-xl space-y-2">
                         {vendorItems.map((item) => (
                           <div

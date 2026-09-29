@@ -1,6 +1,7 @@
+// src/app/checkout/page.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useMarketplace } from "@/context/MarketplaceContext";
@@ -15,6 +16,7 @@ import {
   ArrowLeft,
   ShoppingBag,
   Sparkles,
+  LogIn,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -22,16 +24,27 @@ export default function CheckoutPage() {
   const { createOrder } = useMarketplace();
   const { currentUser } = useAuth();
 
-  // Form State
+  // Null-safe Form State for both Guests and Logged In Users
   const [formData, setFormData] = useState({
-    name: currentUser.name,
-    email: currentUser.email,
+    name: currentUser?.name || "Alex Morgan",
+    email: currentUser?.email || "alex@example.com",
     street: "742 Evergreen Terrace",
     city: "Springfield",
     state: "OR",
     postalCode: "97477",
     country: "USA",
   });
+
+  // Agar user login/switch ho to form automatically sync ho
+  useEffect(() => {
+    if (currentUser) {
+      setFormData((prev) => ({
+        ...prev,
+        name: currentUser.name,
+        email: currentUser.email,
+      }));
+    }
+  }, [currentUser]);
 
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -61,7 +74,7 @@ export default function CheckoutPage() {
 
     setTimeout(() => {
       const orderPayload = {
-        userId: currentUser.id,
+        userId: currentUser?.id || "guest-user",
         customerName: formData.name,
         customerEmail: formData.email,
         shippingAddress: {
@@ -170,10 +183,10 @@ export default function CheckoutPage() {
             Continue Shopping
           </Link>
           <Link
-            href="/vendor"
+            href="/orders"
             className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs rounded-xl shadow-2xs transition"
           >
-            View Vendor Dashboard &rarr;
+            View Live Tracking &rarr;
           </Link>
         </div>
       </div>
@@ -215,6 +228,22 @@ export default function CheckoutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Left Column: Shipping & Payment Form */}
         <div className="lg:col-span-7 space-y-6">
+          {!currentUser && (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-900">
+              <span>
+                Checking out as a Guest? You can also sign in to save your
+                order:
+              </span>
+              <Link
+                href="/login?redirect=/checkout"
+                className="px-3 py-1.5 bg-emerald-600 text-white font-semibold rounded-lg flex items-center gap-1"
+              >
+                <LogIn className="w-3 h-3" />
+                <span>Sign In</span>
+              </Link>
+            </div>
+          )}
+
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
             <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
               <Truck className="w-5 h-5 text-emerald-600" />
@@ -231,7 +260,7 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Full Name
+                    Full Name *
                   </label>
                   <input
                     type="text"
@@ -246,7 +275,7 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Email Address
+                    Email Address (for order updates) *
                   </label>
                   <input
                     type="email"
@@ -262,7 +291,7 @@ export default function CheckoutPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Street Address
+                  Street Address *
                 </label>
                 <input
                   type="text"
@@ -278,7 +307,7 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    City
+                    City *
                   </label>
                   <input
                     type="text"
@@ -292,7 +321,7 @@ export default function CheckoutPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    State / Region
+                    State / Region *
                   </label>
                   <input
                     type="text"
@@ -306,7 +335,7 @@ export default function CheckoutPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Postal Code
+                    Postal Code *
                   </label>
                   <input
                     type="text"
