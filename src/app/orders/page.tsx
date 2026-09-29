@@ -15,11 +15,37 @@ import {
   ArrowRight,
   ShoppingBag,
   MapPin,
+  LogIn,
 } from "lucide-react";
 
 export default function CustomerOrdersPage() {
   const { currentUser } = useAuth();
   const { orders } = useMarketplace();
+
+  // Agar user logged in nahi hai to clean sign in screen show karein
+  if (!currentUser) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
+        <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+          <Package className="w-8 h-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">
+          Sign In to Track Orders
+        </h2>
+        <p className="text-xs text-slate-500 leading-relaxed">
+          Please sign in to your account to view your past purchases, track
+          active shipments, and monitor delivery progress.
+        </p>
+        <Link
+          href="/login?redirect=/orders"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-xs transition"
+        >
+          <LogIn className="w-3.5 h-3.5" />
+          <span>Sign In to Account</span>
+        </Link>
+      </div>
+    );
+  }
 
   // Filter orders placed by the current customer
   const myOrders = orders.filter((o) => o.userId === currentUser.id);
@@ -64,7 +90,7 @@ export default function CustomerOrdersPage() {
 
       {/* Orders List */}
       {myOrders.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-md mx-auto space-y-4">
+        <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-md mx-auto space-y-4 shadow-xs">
           <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
             <ShoppingBag className="w-8 h-8" />
           </div>
@@ -72,8 +98,8 @@ export default function CustomerOrdersPage() {
             No orders placed yet
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">
-            When you checkout items from our independent makers, you can track
-            their fulfillment and delivery right here.
+            When you checkout items from our 20 verified independent makers, you
+            can track their fulfillment and delivery right here.
           </p>
           <Link
             href="/products"

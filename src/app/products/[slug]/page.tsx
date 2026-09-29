@@ -1,3 +1,4 @@
+// src/app/products/[slug]/page.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -81,9 +82,11 @@ export default function ProductDetailPage() {
     if (!reviewComment.trim()) return;
 
     addProductReview(product.id, {
-      userId: currentUser.id,
-      userName: currentUser.name,
-      userAvatar: currentUser.avatar,
+      userId: currentUser?.id || "guest-user",
+      userName: currentUser?.name || "Verified Customer",
+      userAvatar:
+        currentUser?.avatar ||
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
       rating: reviewRating,
       comment: reviewComment.trim(),
     });
@@ -333,8 +336,9 @@ export default function ProductDetailPage() {
             <h3 className="font-bold text-sm text-slate-900">Leave a Review</h3>
             <p className="text-xs text-slate-500">
               Posting as{" "}
-              <strong className="text-slate-900">{currentUser.name}</strong> (
-              {currentUser.role})
+              <strong className="text-slate-900">
+                {currentUser?.name || "Verified Customer"}
+              </strong>
             </p>
 
             {reviewSubmitted && (
