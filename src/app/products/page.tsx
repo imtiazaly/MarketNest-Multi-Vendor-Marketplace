@@ -1,6 +1,7 @@
+// src/app/products/page.tsx
 "use client";
 
-import React, { useState, useMemo, Suspense } from "react";
+import React, { useState, useMemo, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMarketplace } from "@/context/MarketplaceContext";
 import ProductCard from "@/components/ProductCard";
@@ -14,6 +15,7 @@ import {
   Sparkles,
   Store,
   ChevronDown,
+  ArrowUp,
 } from "lucide-react";
 
 function ProductCatalogContent() {
@@ -32,6 +34,24 @@ function ProductCatalogContent() {
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>("featured");
   const [mobileFilterOpen, setMobileFilterOpen] = useState<boolean>(false);
+  const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+
+  // Scroll to top listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
@@ -108,7 +128,7 @@ function ProductCatalogContent() {
     inStockOnly;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
       {/* Top Header & Breadcrumbs */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
@@ -123,7 +143,7 @@ function ProductCatalogContent() {
             <strong className="text-slate-900 font-semibold">
               {filteredProducts.length}
             </strong>{" "}
-            unique creations from vetted independent makers
+            unique creations across 20 verified studios
           </p>
         </div>
 
@@ -134,7 +154,7 @@ function ProductCatalogContent() {
             className="lg:hidden flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 shadow-2xs"
           >
             <SlidersHorizontal className="w-4 h-4" />
-            <span>Filters</span>
+            <span>Filters ({filteredProducts.length})</span>
           </button>
 
           <div className="relative">
@@ -154,10 +174,10 @@ function ProductCatalogContent() {
         </div>
       </div>
 
-      {/* Main Layout: Sidebar Filters + Products Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-8">
-        {/* Desktop Sidebar Filter */}
-        <aside className="hidden lg:block space-y-6">
+      {/* Main Layout: Sticky Sidebar + Scrollable Products Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-8 items-start">
+        {/* DESKTOP STICKY SIDEBAR: Pinned on scroll */}
+        <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pr-1">
           <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <span className="font-bold text-sm text-slate-900 flex items-center gap-2">
@@ -183,7 +203,7 @@ function ProductCatalogContent() {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Vase, leather, audio..."
+                  placeholder="Vase, leather, audio, lamp..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-emerald-500 focus:bg-white"
@@ -195,7 +215,7 @@ function ProductCatalogContent() {
             {/* Categories */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-2">
-                Category
+                Department
               </label>
               <div className="space-y-1">
                 {PRODUCT_CATEGORIES.map((cat) => (
@@ -217,17 +237,19 @@ function ProductCatalogContent() {
               </div>
             </div>
 
-            {/* Maker / Vendor Filter */}
+            {/* Maker / Vendor Filter (All 20+ Studios) */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-2">
-                Independent Studio
+                Independent Studio ({vendors.length})
               </label>
               <select
                 value={selectedVendor}
                 onChange={(e) => setSelectedVendor(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-700 outline-none focus:border-emerald-500 cursor-pointer"
               >
-                <option value="All">All Makers & Studios</option>
+                <option value="All">
+                  All Makers ({vendors.length} Studios)
+                </option>
                 {vendors.map((v) => (
                   <option key={v.id} value={v.id}>
                     {v.name}
@@ -278,7 +300,7 @@ function ProductCatalogContent() {
           </div>
         </aside>
 
-        {/* Product Grid Area */}
+        {/* Product Grid Area (Scrolls freely while sidebar stays pinned) */}
         <main className="lg:col-span-3 space-y-6">
           {/* Active Filter Pills Bar */}
           {hasActiveFilters && (
@@ -365,7 +387,18 @@ function ProductCatalogContent() {
         </main>
       </div>
 
-      {/* Mobile Filter Modal */}
+      {/* Floating Scroll-to-Top Button for 200+ Products */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-30 p-3 bg-slate-900 hover:bg-emerald-600 text-white rounded-full shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+          title="Back to Top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
+
+      {/* Mobile Filter Drawer */}
       {mobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
           <div
@@ -459,7 +492,6 @@ function ProductCatalogContent() {
   );
 }
 
-// Wrap with Suspense to satisfy Next.js useSearchParams SSR requirements
 export default function ProductsPage() {
   return (
     <Suspense
