@@ -24,7 +24,7 @@
 
 <br/>
 
-[🚀 Live Demo](https://imtiazaly.github.io/MarketNest-Multi-Vendor-Marketplace/admin) · [📁 Source Code](https://github.com/imtiazaly/MarketNest-Multi-Vendor-Marketplace) · [🐛 Report Bug](https://github.com/imtiazaly/MarketNest-Multi-Vendor-Marketplace/issues)
+[🚀 Live Demo](https://imtiazaly.github.io/MarketNest-Multi-Vendor-Marketplace/) · [📁 Source Code](https://github.com/imtiazaly/MarketNest-Multi-Vendor-Marketplace) · [🐛 Report Bug](https://github.com/imtiazaly/MarketNest-Multi-Vendor-Marketplace/issues)
 
 </div>
 
