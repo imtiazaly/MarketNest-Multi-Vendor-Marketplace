@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="url(#marketnest_grad)"/>
+  <path d="M7 13.5L8.5 7H23.5L25 13.5M7 13.5V24C7 24.5523 7.44772 25 8 25H24C24.5523 25 25 24.5523 25 24V13.5M7 13.5H25M12 25V18C12 17.4477 12.4477 17 13 17H19C19.5523 17 20 17.4477 20 18V25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="marketnest_grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#059669"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+</svg>
