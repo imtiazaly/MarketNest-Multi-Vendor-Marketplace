@@ -461,7 +461,7 @@ const PRODUCT_CATALOG_BLUEPRINTS: Record<
         price: 210,
         compareAtPrice: 250,
         image:
-          "https://images.unsplash.com/photo-1580481077195-c328a37ea71a?w=800&fit=crop",
+          "https://images.unsplash.com/photo-1653971858625-9cb23d0dca80?w=800&fit=crop",
         desc: "Solid American walnut dining chair with ergonomic curved backrest and natural linen cushioned seat.",
         tags: ["Furniture", "Walnut", "Scandinavian"],
       },
