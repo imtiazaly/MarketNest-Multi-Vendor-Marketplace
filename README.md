@@ -118,7 +118,8 @@ MarketNest features a **3-tier role-based access control (RBAC)** system with a 
 
 ```
 /                         → Homepage (Hero, Featured Products, Vendor Spotlight, Fresh Drops)
-/products                 → Full product catalog with search, filter, sort
+/dashboard                → 📊 Customer Dashboard (KPIs, orders, spending, wishlist, quick links)
+/products                 → Full product catalog with search, filter, sort, compare
 /products/[slug]          → Product detail page (images, reviews, add-to-cart)
 /vendors                  → All 20 vendor studios directory
 /vendors/[id]             → Individual vendor storefront (banner, products, stats)
@@ -178,11 +179,12 @@ marketnest/
 │   │   ├── page.tsx            # Homepage
 │   │   ├── admin/page.tsx      # 🔒 Admin Governance Portal
 │   │   ├── checkout/page.tsx   # Multi-vendor Checkout
+│   │   ├── dashboard/page.tsx  # 📊 Customer Dashboard (KPIs, orders, wishlist, spending)
 │   │   ├── login/page.tsx      # Authentication
 │   │   ├── register/page.tsx   # Registration
-│   │   ├── orders/page.tsx     # Order History
+│   │   ├── orders/page.tsx     # Order History & Tracking
 │   │   ├── products/
-│   │   │   ├── page.tsx        # Product catalog (search/filter)
+│   │   │   ├── page.tsx        # Product catalog (search/filter/compare)
 │   │   │   └── [slug]/page.tsx # Product Detail Page
 │   │   ├── profile/page.tsx    # User Profile & Settings
 │   │   ├── vendor/page.tsx     # 🔒 Vendor Dashboard
@@ -195,7 +197,8 @@ marketnest/
 │   │   ├── Navbar.tsx          # Sticky navbar with search, cart, user dropdown
 │   │   ├── Footer.tsx          # Site footer
 │   │   ├── CartDrawer.tsx      # Slide-over cart panel
-│   │   ├── ProductCard.tsx     # Reusable product card
+│   │   ├── CompareModal.tsx    # 🆕 Side-by-side product comparison modal (up to 3)
+│   │   ├── ProductCard.tsx     # Reusable product card (with compare toggle)
 │   │   ├── VendorCard.tsx      # Reusable vendor card
 │   │   └── RoleSwitcherBanner.tsx  # Portfolio demo role switcher
 │   │
@@ -203,6 +206,7 @@ marketnest/
 │   │   ├── AppProviders.tsx    # Composes all context providers
 │   │   ├── AuthContext.tsx     # User sessions, login, register, profile
 │   │   ├── CartContext.tsx     # Cart state, totals, shipping, tax
+│   │   ├── CompareContext.tsx  # 🆕 Product comparison list (max 3), modal control
 │   │   ├── WishlistContext.tsx # Wishlist add/remove/persist
 │   │   └── MarketplaceContext.tsx  # Products, vendors, orders, CRUD operations
 │   │
@@ -268,7 +272,8 @@ The application uses **4 independent React Contexts**, composed together via `Ap
  ├── <AuthProvider>          → currentUser, login, register, logout, quickLogin, updateProfile
  ├── <MarketplaceProvider>   → products, vendors, orders, addProduct, deleteProduct, createOrder, updateOrderStatus
  ├── <CartProvider>          → cart, addToCart, removeFromCart, subtotal, tax, shippingFee, total
- └── <WishlistProvider>      → wishlist, addToWishlist, removeFromWishlist, isInWishlist
+ ├── <WishlistProvider>      → wishlist, addToWishlist, removeFromWishlist, isInWishlist
+ └── <CompareProvider>       → compareList (max 3), addToCompare, removeFromCompare, isInCompare, openCompare
 ```
 
 Each context exposes a typed custom hook (`useAuth`, `useMarketplace`, `useCart`, `useWishlist`) for clean, ergonomic consumption across all pages and components.

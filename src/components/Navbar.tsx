@@ -17,6 +17,7 @@ import {
   LogOut,
   ChevronDown,
   ShieldCheck,
+  LayoutDashboard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -170,6 +171,16 @@ export default function Navbar() {
                       <User className="w-4 h-4 text-slate-500" />
                       <span>My Profile Settings</span>
                     </Link>
+
+                    {currentUser.role === "customer" && (
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 transition text-emerald-700 font-semibold"
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        <span>My Dashboard</span>
+                      </Link>
+                    )}
 
                     <Link
                       href="/orders"

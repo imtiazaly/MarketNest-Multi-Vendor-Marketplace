@@ -4,7 +4,9 @@
 import React, { useState, useMemo, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMarketplace } from "@/context/MarketplaceContext";
+import { useCompare } from "@/context/CompareContext";
 import ProductCard from "@/components/ProductCard";
+import CompareModal from "@/components/CompareModal";
 import { PRODUCT_CATEGORIES } from "@/data/mockData";
 import { formatPrice } from "@/lib/utils";
 import {
@@ -12,10 +14,9 @@ import {
   X,
   Search,
   RotateCcw,
-  Sparkles,
-  Store,
   ChevronDown,
   ArrowUp,
+  GitCompareArrows,
 } from "lucide-react";
 
 function ProductCatalogContent() {
@@ -24,6 +25,7 @@ function ProductCatalogContent() {
   const initialSearch = searchParams.get("search") || "";
 
   const { products, vendors } = useMarketplace();
+  const { compareList, openCompare, isCompareOpen } = useCompare();
 
   // Filter States
   const [selectedCategory, setSelectedCategory] =
@@ -380,7 +382,7 @@ function ProductCatalogContent() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} showCompare />
               ))}
             </div>
           )}
@@ -397,6 +399,38 @@ function ProductCatalogContent() {
           <ArrowUp className="w-5 h-5" />
         </button>
       )}
+
+      {/* Floating Compare Bar — appears when 2+ products are selected */}
+      {compareList.length >= 2 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 animate-in slide-in-from-bottom-4">
+          <div className="flex items-center gap-2">
+            <GitCompareArrows className="w-5 h-5 text-blue-400" />
+            <span className="text-sm font-semibold">
+              {compareList.length} products selected
+            </span>
+            <div className="flex items-center gap-1 ml-1">
+              {compareList.map((p) => (
+                <img
+                  key={p.id}
+                  src={p.images[0]}
+                  alt={p.title}
+                  className="w-7 h-7 rounded-lg object-cover border-2 border-slate-700"
+                />
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={openCompare}
+            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition"
+          >
+            Compare Now →
+          </button>
+        </div>
+      )}
+
+      {/* Compare Modal */}
+      {isCompareOpen && <CompareModal />}
+
 
       {/* Mobile Filter Drawer */}
       {mobileFilterOpen && (

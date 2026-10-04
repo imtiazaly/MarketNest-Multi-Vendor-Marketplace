@@ -6,23 +6,38 @@ import { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { Heart, ShoppingBag, Star, Store } from "lucide-react";
+import { useCompare } from "@/context/CompareContext";
+import { Heart, ShoppingBag, Star, Store, GitCompareArrows } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
+  showCompare?: boolean; // Only show compare button on /products page
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, showCompare = false }: ProductCardProps) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { addToCompare, removeFromCompare, isInCompare, compareList } = useCompare();
 
   const isLiked = isInWishlist(product.id);
+  const inCompare = isInCompare(product.id);
+  const compareFull = compareList.length >= 3 && !inCompare;
+
   const discountPercent = product.compareAtPrice
     ? Math.round(
         ((product.compareAtPrice - product.price) / product.compareAtPrice) *
           100,
       )
     : 0;
+
+  const handleCompareToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (inCompare) {
+      removeFromCompare(product.id);
+    } else if (!compareFull) {
+      addToCompare(product);
+    }
+  };
 
   return (
     <div className="group relative bg-white rounded-2xl border border-slate-200/70 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
@@ -121,14 +136,40 @@ export default function ProductCard({ product }: ProductCardProps) {
             </p>
           </div>
 
-          <button
-            onClick={() => addToCart(product)}
-            disabled={product.stock <= 0}
-            className="p-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-white shadow-sm hover:shadow transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Add to cart"
-          >
-            <ShoppingBag className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            {/* Compare Button — only on catalog page */}
+            {showCompare && (
+              <button
+                onClick={handleCompareToggle}
+                disabled={compareFull}
+                title={
+                  inCompare
+                    ? "Remove from compare"
+                    : compareFull
+                    ? "Compare list full (max 3)"
+                    : "Add to compare"
+                }
+                className={`p-2 rounded-xl transition-all duration-200 ${
+                  inCompare
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : compareFull
+                    ? "bg-slate-100 text-slate-300 cursor-not-allowed"
+                    : "bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600"
+                }`}
+              >
+                <GitCompareArrows className="w-4 h-4" />
+              </button>
+            )}
+
+            <button
+              onClick={() => addToCart(product)}
+              disabled={product.stock <= 0}
+              className="p-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-white shadow-sm hover:shadow transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Add to cart"
+            >
+              <ShoppingBag className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
